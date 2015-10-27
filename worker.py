@@ -15,6 +15,7 @@
 
 import re
 
+
 def word_count(text_blob):
     word_map = {}
 
