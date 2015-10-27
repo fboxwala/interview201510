@@ -15,9 +15,17 @@
 
 from __future__ import absolute_import
 
-from celery import Celery
+from celery import group
+import sys
 from worker import word_count
+from collector import reduce_word_count, top_ten
 
-result = word_count.delay("test blob")
 
-print result.get()
+if len(sys.argv) == 1:
+    print ("Simple distributed file indexer: counts top 10 words in files in\n"
+           "provided directories.\n"
+           "Usage: python scheduler.py FILE1 FILE2 ...")
+else:
+    texts = [open(name, 'r').read() for name in sys.argv[1:]]
+    result = group(word_count.s(text) for text in texts).apply_async()
+    print top_ten(reduce_word_count(result.get()))

@@ -52,12 +52,11 @@ celery -A worker worker
 ```
 
 Then you can run the scheduler, which will deploy tasks and collect the
-results. In the current sample setup, the scheduler will run a sample word
-count on the text "test blob":
+results. The scheduler takes in a list of files, and will print out the top 10
+words in the processed list:
 
 ```
-$ python scheduler.py
-Counter({'test': 1, 'blob': 1})
+python scheduler.py file1 file2 file3 ...
 ```
 
 ## Testing ##
