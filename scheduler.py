@@ -15,16 +15,9 @@
 
 from __future__ import absolute_import
 
+from celery import Celery
+from worker import word_count
 
-from celerysetup import app
-from collections import Counter
-import re
+result = word_count.delay("test blob")
 
-
-@app.task
-def word_count(text_blob):
-    # filter(bool, list) removes empty strings, which evaluate to False.
-    tokens = [x.lower() for x in
-              filter(bool, re.split('[^a-zA-Z0-9]+', text_blob))]
-
-    return Counter(tokens)
+print result.get()

@@ -15,16 +15,13 @@
 
 from __future__ import absolute_import
 
-
-from celerysetup import app
-from collections import Counter
-import re
+from celery import Celery
 
 
-@app.task
-def word_count(text_blob):
-    # filter(bool, list) removes empty strings, which evaluate to False.
-    tokens = [x.lower() for x in
-              filter(bool, re.split('[^a-zA-Z0-9]+', text_blob))]
+app = Celery('indexer',
+             broker='amqp://',
+             backend='amqp://',
+             include=['worker'])
 
-    return Counter(tokens)
+if __name__ == '__main__':
+    app.start()
