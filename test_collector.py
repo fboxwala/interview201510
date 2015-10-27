@@ -18,7 +18,7 @@ import unittest
 from collector import reduce_word_count
 
 
-class TestWorker(unittest.TestCase):
+class TestReduce(unittest.TestCase):
     def test_single_dict(self):
         self.assertEqual(reduce_word_count([{'word': 1}]), {'word': 1})
 

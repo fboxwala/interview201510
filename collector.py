@@ -15,6 +15,7 @@
 
 from collections import Counter
 
+
 def reduce_word_count(word_maps):
     word_map = Counter()
 
