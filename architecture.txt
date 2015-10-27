@@ -1,0 +1,98 @@
+
+Simple Distributed File Indexer
+
+                    /------> worker 1 --\  send word maps
+                   /                     \
+scheduler ------(1)--------> worker 2 ---(2)-->  master collection ---> output top 10
+  doles out text blobs \     ...         /        adds up word maps
+                        \--> worker n --/
+                      tokenize & count words
+
+Figure 1: Workflow model
+
+(1) Scheduling queue. Any of the workers or the scheduler can lock the queue. 
+    Scheduler locks the queue when writing to it, workers lock the queue when
+    reading from it. When a worker reads an item out of the queue, the item is
+    removed from the queue.
+
+(2) Aggregate queue. Any of the workers or the master collection can lock the
+    queue. Workers lock the queue when they want to write their word maps for
+    the master collection to digest. Master collection locks the when reading 
+    from it, removing items.
+
+
+Software design choices
+-----------------------
+
+Language choice: Python.
+    This is arbitrary, but I picked Python because it's a high-level language 
+    that is widely used and supported. Performance was not specified as a 
+    priority in the spec so that factored into the decision (over say, choosing 
+    C++ with much more complexity and required boilerplate).
+
+Scheduling: Celery.
+    I haven't used Celery before for job management but it was highly 
+    recommended as the tool to use when solving this kind of problem in Python. 
+    So I'm going to try it out for the first time with this project. With 
+    celery, we can extend to a multi-machine model as described in the spec, 
+    though I will only attempt testing on a local machine. I'll use RabbitMQ as 
+    a broker (over Redis) for simplicity.
+
+
+Attack plan
+-----------
+
+(1) Write the workers. They are the backbone of the application so they seem 
+    like a good place to start.
+
+    worker.py
+        word_count: string text_blob -> map<string word, int count> word_map
+        '''Tokenize a blob of ascii text and return a count of each word found
+        in the blob.'''
+    test_worker.py
+        Functional tests for word_count.
+
+    Known caveats/notes: NO UNICODE. Since spec defines as word as "delimited 
+    by any character other than A-Z or 0-9", we will assume that text is fully
+    ASCII. While Python is pretty great at dealing with Unicode, let's consider
+    this out of scope.
+
+(2) Write the master collection.
+
+    collector.py
+        reduce_word_count: list<map<string, int>> word_maps -> 
+            map<string word, int count> word_map
+        "Aggregate a list of word_maps into a single word_map."
+
+        top_ten: map<string word, int count> word_map -> 
+            map<string word, int count> top_ten
+        "Returns the top 10 words from a given word_map, sorted by count."
+
+    test_collector.py
+        Functional tests for reduce_word_count and top_ten.
+
+    Known caveats/notes: Function signature for reduce_word_count may need to 
+    change depending on the way queue implementation works.
+
+(3) Add scheduling.
+
+    This section is a giant unknown because I haven't actually done it before.
+    I'll use it as an opportunity to glue the above code together.
+
+    Known caveats/notes: at this point I'll have to add real Python 
+    dependencies, so we will need to add installation instructions. I think I 
+    will use a virtualenv with a requirements list to pip install.
+
+
+Scope
+-----
+
+Here are some things I am declaring out of scope:
+
+* Packaging: I won't be able to provide an `import awesome_indexer` upon 
+  completion.
+* Multi-machine use case: The code should be extensible to this use case, but I 
+  won't actually test it or spend time on that during implementation.
+* Extensive testing: I'm going to stick to functional tests, meaning I will 
+  not include other valuable types of testing (stress/performance, security, 
+  white box, formal verification, user tests, etc.).
