@@ -13,7 +13,14 @@ You need Python installed in order to run this code.
 
 ## Testing ##
 
-Running the unit tests is as easy as typing the command
+Running all unit tests is as easy as typing the command
+
+```
+python -m unittest discover
+```
+
+You can also run tests specific to a certain part of the code base, for
+instance
 
 ```
 python -m unittest test_worker
