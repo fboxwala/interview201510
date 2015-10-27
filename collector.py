@@ -20,10 +20,10 @@ def reduce_word_count(word_maps):
     word_map = Counter()
 
     for item in word_maps:
-        word_map += Counter(item)
+        word_map.update(item)
 
-    return dict(word_map)
+    return word_map
 
 
 def top_ten(word_map):
-    return dict(Counter(word_map).most_common(10))
+    return dict(word_map.most_common(10))

@@ -46,7 +46,7 @@ Attack plan
     like a good place to start.
 
     worker.py
-        word_count: string text_blob -> map<string word, int count> word_map
+        word_count: string text_blob -> Counter word_map
         '''Tokenize a blob of ascii text and return a count of each word found
         in the blob.'''
     test_worker.py
@@ -60,12 +60,10 @@ Attack plan
 (2) Write the master collection.
 
     collector.py
-        reduce_word_count: list<map<string, int>> word_maps -> 
-            map<string word, int count> word_map
+        reduce_word_count: list<Counter> word_maps -> Counter word_map
         "Aggregate a list of word_maps into a single word_map."
 
-        top_ten: map<string word, int count> word_map -> 
-            map<string word, int count> top_ten
+        top_ten: Counter word_map -> map<string word, int count> top_ten
         "Returns the top 10 words from a given word_map, sorted by count."
 
     test_collector.py
