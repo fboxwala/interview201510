@@ -23,3 +23,7 @@ def reduce_word_count(word_maps):
         word_map += Counter(item)
 
     return dict(word_map)
+
+
+def top_ten(word_map):
+    return dict(Counter(word_map).most_common(10))
