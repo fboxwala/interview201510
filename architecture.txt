@@ -87,10 +87,14 @@ Scope
 
 Here are some things I am declaring out of scope:
 
-* Packaging: I won't be able to provide an `import awesome_indexer` upon 
-  completion.
-* Multi-machine use case: The code should be extensible to this use case, but I 
-  won't actually test it or spend time on that during implementation.
-* Extensive testing: I'm going to stick to functional tests, meaning I will 
-  not include other valuable types of testing (stress/performance, security, 
-  white box, formal verification, user tests, etc.).
+* Packaging: you won't be able to `pip install awesome_indexer` when I'm done.
+* Multi-machine use case: The code should be extensible to this use case in its
+  current form, but I won't actually test it or spend time on that during
+  implementation.
+* Extensive testing: I'm going to stick to functional tests, meaning I will
+  not include other valuable types of testing (stress/performance, white box,
+  formal verification, user tests, etc.).
+* Security evaluation: There are a lot of moving pieces here. Everything is
+  running on the localhost but there is no authentication set up on the task
+  queue. I won't have the time to perform a detailed security audit or
+  penetration testing.
